@@ -1,0 +1,87 @@
+{% extends 'layout.html' %}
+
+{% block body%}
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-info alert-dismissible fade show" role="alert">
+        <strong>{{ message }}</strong> 
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+<div class="row">
+    <div class="col-md-12">
+        {% if isSearch %}
+            <h1 class="display-4">Results Of {{search}} </h1>
+        {%else%}
+            <h1 class="display-4">Latest Cryptocurrency Information</h1>
+        {% endif %}
+        <br/>
+        {% if length == 0 %}
+            <h1 class="display-4 text-danger">No Results </h1>
+        {% else %}
+            <table class="table table-striped table-dark table-hover">
+            <thead class="thead-dark">
+                <tr>
+                  <td class="text-center"><h5>Name</h5></td>
+                  <td class="text-center"><h5>Symbol</h5></td>
+                  <td class="text-center"><h5>Price</h5></td>
+                  <td class="text-center"><h5>Market Capitalization</h5></td>
+                  <td class="text-center"><h5>Percent Change 1h</h5></td> 
+                  <td class="text-center"><h5>Percent Change 24h</h5></td>
+                  <td class="text-center"><h5>Percent Change 7d</h5></td>
+                  <td class="text-center"><h5>Action</h5></td> 
+                </tr>
+            </thead>
+            <tbody>
+               {% for element in data %}
+                <tr>
+                    <td class="text-center"><h5>{{element['crypto']['name']}}</h5></td>
+                    <td class="text-center"><h5>{{element['crypto']['symbol']}}</h5></td>
+                    <td class="text-center"><h5> {{"$%.2f"|format(element['crypto']['price']|float) }}</h5></td>
+                    <td class="text-center"><h5> {{"$%.1f"|format(element['crypto']['market_cap']|float) }}</h5></td>
+                    {% if element['crypto']['percent_change_1h'][0].isnumeric()%}
+                        <td class="text-center" style='color: #32CD32;'><h5> &#8593; {{ "%.2f"|format(element['crypto']['percent_change_1h']|float) }}%</h5></td>
+                    {%else%}
+                        <td class="text-center" style='color: red;'><h5>&#8595; {{ "%.2f"|format(element['crypto']['percent_change_1h'][1 : -1]|float) }}%</h5></td>
+                    {% endif %}
+                    {% if element['crypto']['percent_change_24h'][0].isnumeric()%}
+                        <td class="text-center" style='color: #32CD32;'><h5>&#8593; {{ "%.2f"|format(element['crypto']['percent_change_24h']|float) }}%</h5></td>
+                    {%else%}
+                        <td class="text-center" style='color: red;'><h5 >&#8595; {{ "%.2f"|format(element['crypto']['percent_change_24h'][1 : -1]|float) }}%</h5></td>
+                    {% endif %}
+                    {% if element['crypto']['percent_change_7d'][0].isnumeric()%}
+                        <td class="text-center" style='color: #32CD32;'><h5>&#8593; {{ "%.2f"|format(element['crypto']['percent_change_7d']|float) }}%</h5></td>
+                    {%else%}
+                        <td class="text-center" style='color: red;'><h5>&#8595; {{ "%.2f"|format(element['crypto']['percent_change_7d'][1 : -1]|float) }}%</h5></td>
+                    {% endif %}
+                    <td class="text-center">
+                    {% if isSearch%}
+                        <a href="/delete/{{element['_id']}}/{{element['index']}}" class="btn btn-primary">
+                            <h5>Delete</h5>
+                        </a> 
+                    {% else %}
+                        <a href="/delete/{{element['_id']}}/{{data.index(element)}}" class="btn btn-primary">
+                            <h5>Delete</h5>
+                        </a> 
+                    {% endif %}
+                        
+                    </td>
+                </tr>
+               {% endfor %} 
+            </tbody>
+        </table>
+        {% endif %}  
+    </div>
+    <div class="col-md-12 d-flex justify-content-center">
+    {{ pagination.links }}
+    </div>   
+</div>
+
+      
+
+{% endblock %}

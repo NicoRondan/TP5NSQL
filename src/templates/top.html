@@ -1,0 +1,25 @@
+{% extends 'layout.html' %}
+
+{% block body%}
+<h1 class="display-4">TOP {{length}} CRYPTOCURRENCIES</h1>
+<br/>
+{% for e in data%}
+    <div class="row">
+        <div class="col-md-1 pt-4">
+            <h1 class="display-4">{{loop.index}})</h1>
+        </div>
+        <div class="col-md-5 pt-4">
+            <ul class="list-group">
+                    <div class="card bg-white">
+                        <div class="card-body">
+                            <h5 class="card-title"><strong> {{e['crypto']['name'].upper()}}</strong></h5>
+                            <h6 class="card-subtitle mb-2 text-muted"> Price: {{"$%.2f"|format(e['crypto']['price']|float)}}</h6>
+                            <p class="card-text">Market Capitalization: {{"$%.1f"|format(e['crypto']['market_cap']|float) }} </p>
+                        </div>
+                    </div>   
+            </ul>
+        </div>
+    </div>
+{% endfor %}
+
+{% endblock %}

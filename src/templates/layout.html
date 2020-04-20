@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crypto Info App</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}">
+    <link href="https://stackpath.bootstrapcdn.com/bootswatch/4.4.1/simplex/bootstrap.min.css" rel="stylesheet" integrity="sha384-cRAmF0wErT4D9dEBc36qB6pVu+KmLh516IoGWD/Gfm6FicBbyDuHgS4jmkQB8u1a" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a href="/" class="navbar-brand mb-0 h1"><span>Cryptocurrency API</span></a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+             <span class="navbar-toggler-icon"></span>
+         </button>
+        <ul class="navbar-nav ml-3">
+            <li class="nav-item">
+                <a class="nav-link" href="/top5">TOP 5</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/top20">TOP 20</a>
+            </li>
+        </ul>
+        <ul class="navbar-nav ml-auto">
+            
+            <li class="nav-item">
+                <a class="nav-link" href="/info">HELP</a>
+            </li>
+            <form class="form-inline ml-2 my-sm-0" action="/search">
+                <input class="form-control mr-sm-2" type="search" placeholder="Search Cryptocurrency" aria-label="Search" name='search'>
+                <button class="btn btn-outline-info my-2 my-sm-0" type="submit">Search</button>
+            </form>
+        </ul>
+
+      </nav>
+    <div class="container pt-4">
+        {% block body%}
+        {% endblock %}
+        <br/>
+        {%- block footer %}
+        <footer><strong>&copy; 2020 Cryptocurrency, API.</strong></footer>
+        {%- endblock footer %}
+    </div>
+</body>
+</html>
