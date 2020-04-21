@@ -1,6 +1,0 @@
-flask
-Flask-PyMongo
-requests
-json
-cryptography
-python-dotenv

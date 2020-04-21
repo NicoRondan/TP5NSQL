@@ -1,0 +1,24 @@
+version: "3"
+services:
+  src:
+    build: .
+    command: sh -c 'python app.py'
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/src
+    depends_on:
+      - "db"
+      - "db2"
+  
+  db:
+    container_name: 'mongodb_cryptos'
+    image: mongo
+    ports:
+      - '27017:27017'
+  
+  db2:
+    container_name: 'mongodb_hashkey'
+    image: mongo
+    ports:
+      - '27018:27018'

@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify, Response, flash
-from flask_pymongo import PyMongo
+from pymongo import MongoClient
 from bson import json_util
 from bson.objectid import ObjectId
 import requests
@@ -15,7 +15,7 @@ from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from flask_paginate import Pagination, get_page_args
 
 """Obtener variable de entorno (key)"""
-# Obtener le path del directorio actual
+# Obtener el path del directorio actual
 BASEDIR = os.path.abspath(os.path.dirname(__file__))
 # Conectar el path al .env
 load_dotenv(os.path.join(BASEDIR, '.env'))
@@ -36,7 +36,7 @@ def get_fenec():
     backend=default_backend()
     )
     #Obtenemos key de la otra base de datos
-    secret_key = mongo_key.db.key.find()
+    secret_key = mongo_key.key.find()
     secret_key = json_util.dumps(secret_key)  #De bson a string
     secret_key = json.loads(secret_key)       #A json
     secret_key = secret_key[0]['secret_key']  #Get key
@@ -93,13 +93,13 @@ def initialize():
             token = encrypt(crypto)
             lista.append({'crypto' : token})
         #Guardar en mongo
-        mongo.db.cryptos.insert_many(lista)
+        mongo.cryptos.insert_many(lista)
     except (ConnectionError, Timeout, TooManyRedirects) as error:
         print(error) 
 
 def get_data():
     #Obtener datos
-    cryptos = mongo.db.cryptos.find()
+    cryptos = mongo.cryptos.find()
     #Convertir bson a json
     cryptos1 = json_util.dumps(cryptos)
     #Convertir string a objeto
@@ -134,21 +134,24 @@ app = Flask(__name__)
 """Session"""
 app.secret_key = SECRET_KEY
 
-#Conexión a las base de datos
-mongo = PyMongo(app, uri='mongodb://localhost:27017/cryptoCurrencyBD')
-mongo_key = PyMongo(app, uri='mongodb://localhost:27017/cryptoKey')
+#Conexión a los host de la base de datos
+client = MongoClient(host='db',port=27017)
+mongo = client["cryptos"]
+client2= MongoClient(host='db2',port=27018)
+mongo_key = client['cryptos']
+
 
 """Eliminar colecciones"""
-#mongo.db.cryptos.drop()
-#mongo_key.db.key.drop()
+#mongo.cryptos.drop()
+#mongo_key.key.drop()
 
 
 """Cargar criptos"""
-collist = mongo_key.db.list_collection_names()
+collist = mongo_key.list_collection_names()
 if "key" not in collist:
-    mongo_key.db.key.insert_one({'secret_key': SECRET_KEY})
+    mongo_key.key.insert_one({'secret_key': SECRET_KEY})
 #Verificar que exista la coleccion
-collist2 = mongo.db.list_collection_names()
+collist2 = mongo.list_collection_names()
 if "cryptos" not in collist2:
     initialize() #De no existir insertamos todos los datos
 
@@ -185,14 +188,14 @@ def search():
 
 @app.route('/top20', methods=['GET'])
 def get_top20():
-    #Cargar las primeras 20 cryptomonedas
+    #Cargar las primeras 20 cryptomonedas dado que ya vienen ordenadas por rank
     list_data = [data[i] for i in range(0,20)]
     length = len(list_data)
     return render_template('top.html', data=list_data, length=length)  
 
 @app.route('/top5', methods=['GET'])
 def get_top5():
-    #Cargar las primeras 5 cryptomonedas
+    #Cargar las primeras 5 cryptomonedas dado que ya vienen ordenadas por rank
     list_data = [data[i] for i in range(0,5)]
     length = len(list_data)
     return render_template('top.html', data=list_data, length=length)  
@@ -201,11 +204,14 @@ def get_top5():
 def delete_crypto(id, index):
     #Eliminar también de la data del front
     data.pop(int(index))
-    #Eliminar de la base de datos
-    mongo.db.cryptos.delete_one({'_id': ObjectId(id)})
-    #Retornar al index
-    flash('Cryptocurrency deleted')
-    return redirect(url_for('get_cryptos'))
+    try:
+        #Eliminar de la base de datos
+        mongo.cryptos.delete_one({'_id': ObjectId(id)})
+        #Retornar al index
+        flash('Cryptocurrency deleted')
+        return redirect(url_for('get_cryptos'))
+    except (Exception) as e:
+        print(e)
 
 
 #En caso de error de ruta
@@ -219,4 +225,4 @@ def not_found(error=None):
     return response
 
 if __name__ == "__main__":
-    app.run(host='localhost', port='5000', debug=True)
+    app.run(host='src', port='5000', debug=True)

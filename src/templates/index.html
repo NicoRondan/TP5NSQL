@@ -61,12 +61,12 @@
                     {% endif %}
                     <td class="text-center">
                     {% if isSearch%}
-                        <a href="/delete/{{element['_id']}}/{{element['index']}}" class="btn btn-primary">
-                            <h5>Delete</h5>
+                        <a href="/delete/{{element['_id']}}/{{element['index']}}" class="btn btn-primary" title="Delete">
+                            <h5><i class="fa fa-trash fa-lg"></i></h5> 
                         </a> 
                     {% else %}
-                        <a href="/delete/{{element['_id']}}/{{data.index(element)}}" class="btn btn-primary">
-                            <h5>Delete</h5>
+                        <a href="/delete/{{element['_id']}}/{{data.index(element)}}" class="btn btn-primary" title="Delete">
+                            <h5><i class="fa fa-trash fa-lg"></i></h5> 
                         </a> 
                     {% endif %}
                         
