@@ -1,7 +1,9 @@
 # TP5 NOSQL - API de Criptomonedas
 
 ### Instalación 🔧
-_Ir al directorio src_
+```
+Ir al directorio src
+```
 ```
 Ejecutar el comando docker-compose build
 ```
